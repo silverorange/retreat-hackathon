@@ -51,6 +51,39 @@ frames-per-second the delta value will be 0.016 seconds. If things slow down,
 the delta value could be much higher. This value can be used to scale updates
 so movement remains smooth even if the frame rate becomes inconsistent.
 
+### Animated Sprites
+
+You can animate sprints in several different ways. The easiest with the least
+control is to use an animated gif as a background image. A slightly more
+complicated option with more control is to use a flim-strip image and CSS
+animations. Using this technique, animations can be started, stopped, sped-up
+and slowed-down:
+
+```css
+@keyframes background-animation {
+  /* set background position to the first frame */
+  0% {
+    background-position: 0 0;
+  }
+  /* set background position to the last frame, assuming the image is 50x50 and
+  there are 6 frames of animation */
+  100% {
+    background-position: -250px 0;
+  }
+}
+
+.my-object {
+  width: 50px;
+  height: 50px;
+  background: url('images/film-strip.png');
+  background-size: 300px 50px;
+  background-position: 0 0;
+  background-repeat: no-repeat;
+  /* loop the animation at 6 frames over 1 second */
+  animation: background-animation 1s steps(6) infinite;
+}
+```
+
 ### Sound Effects
 
 There are no sound effects in the game engine, but you can add sounds using
@@ -93,5 +126,3 @@ Detecting collisions of polygons is a bit more complicated, but can be done.
 [There may be NPM packages available](https://www.npmjs.com/package/collider2d)
 to detect point-in-polygon or polygon-intersecting-polygon if you want this for
 your game.
-
-TODO
