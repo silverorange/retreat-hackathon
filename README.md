@@ -12,9 +12,7 @@ score, sound effects, etc, are all up to your team.
 ## Assets
 
 There are some predefined assets in the `src/images` and `src/audio` folders.
-You can use these or create your own new assets
-
-TODO
+You can use these or create your own new assets.
 
 ## Getting Started
 
