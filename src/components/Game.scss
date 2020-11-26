@@ -6,6 +6,10 @@
     box-shadow: 0 0 20px #000;
 }
 
+.app, .game {
+    cursor: url('/images/spray-small.png') 20 20, crosshair;
+}
+
 @keyframes background-animation {
   /* set background position to the first frame */
   0% {
