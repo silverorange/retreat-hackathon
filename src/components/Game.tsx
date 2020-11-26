@@ -1,7 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useAnimationFrame } from '../hooks/useAnimationFrame';
 
+import VirusImage from '../images/covid.svg';
+
 import './Game.scss';
+
+const spray = require('../audio/spray.mp3');
 
 interface Position {
   /** Pixels from left edge of game world */
@@ -20,6 +24,7 @@ interface Velocity {
 interface ObjectProps {
   position: Position;
   velocity: Velocity;
+  hidden: boolean;
 }
 
 interface WorldProps {
@@ -64,6 +69,7 @@ export function Game() {
           angle: Math.random() * Math.PI * 2,
           speed: Math.floor(Math.random() * 201) + 50,
         },
+        hidden: false,
       });
     }
 
@@ -90,7 +96,7 @@ export function Game() {
       // Be careful putting console.log calls in this callback as they will
       // put output on the console on every animation frame, up to 60 times per
       // second.
-      const updatedObjects = objects.map(({ position, velocity }) => {
+      const updatedObjects = objects.map(({ position, velocity, hidden }) => {
         // Get change in position scaled by the animation frame time. This uses
         // vector component formulas from high-school physics to get delta-x and
         // delta-y values:
@@ -107,9 +113,21 @@ export function Game() {
           y: position.y + dy,
         };
 
+        const outsideBounds =
+          newPosition.x < 0 ||
+          newPosition.y < 0 ||
+          newPosition.x > width - 40 ||
+          newPosition.y > height - 40;
+
+        const newVelocity = {
+          angle: outsideBounds ? velocity.angle - Math.PI / 2 : velocity.angle,
+          speed: velocity.speed,
+        };
+
         return {
           position: newPosition,
-          velocity,
+          velocity: newVelocity,
+          hidden,
         };
       });
 
@@ -140,16 +158,54 @@ export function Game() {
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (gameRef.current) {
+        const spraySound = new Audio(spray.default);
+        spraySound.volume = 0.8;
+        spraySound.play();
+
         // This code runs when a click happens. The `position` variable contains
         // the x, y coordinates relative to the game world.
         const div = gameRef.current;
         const rect = div.getBoundingClientRect();
-        const position: Position = {
+        const mousePosition: Position = {
           x: e.clientX - rect.left,
           y: e.clientY - rect.top,
         };
 
-        console.log('clicked', position);
+        let hit = false;
+        let updatedObjects = objects.map(({ position, velocity, hidden }) => {
+          const distance = Math.sqrt(
+            Math.pow(position.x - mousePosition.x, 2) +
+              Math.pow(position.y - mousePosition.y, 2)
+          );
+
+          if (distance < 20) {
+            hit = true;
+          }
+
+          return {
+            position,
+            velocity,
+            hidden: hidden || distance < 20,
+          };
+        });
+
+        if (hit) {
+          updatedObjects = updatedObjects.map(
+            ({ position, velocity, hidden }) => {
+              return {
+                position,
+                velocity: {
+                  ...velocity,
+                  speed: velocity.speed + 10,
+                },
+                hidden,
+              };
+            }
+          );
+        }
+
+        // Update the game world state with the new object data.
+        setObjects(updatedObjects);
       }
     }
 
@@ -161,7 +217,7 @@ export function Game() {
         div.removeEventListener('click', handleClick, false);
       };
     }
-  }, [gameRef]);
+  }, [gameRef, objects]);
 
   // Objects are rendered here with placeholder divs. You can replace this
   // with any type of component you want.
@@ -171,25 +227,29 @@ export function Game() {
 
   return (
     <div className="game" style={{ width, height }} ref={gameRef}>
-      {objects.map(({ position, velocity }, index) => (
-        <div
-          className="game__object"
-          key={index}
-          style={{
-            color: '#fff',
-            borderLeft: '20px solid rgba(100, 180, 220, 0.7)',
-            borderRight: '20px solid transparent',
-            borderTop: '7px solid transparent',
-            borderBottom: '7px solid transparent',
-            position: 'absolute',
-            top: position.y - 7,
-            left: position.x - 20,
-            width: 0,
-            height: 0,
-            transform: `rotate(${velocity.angle}rad)`,
-          }}
-        />
-      ))}
+      {objects
+        .filter((object) => !object.hidden)
+        .map(({ position, velocity }, index) => (
+          <div
+            className="game__object"
+            key={index}
+            style={{
+              position: 'absolute',
+              top: position.y,
+              left: position.x,
+              width: '40px',
+              height: '40px',
+              transform: `rotate(${velocity.angle}rad)`,
+              backgroundImage: `url(${VirusImage})`,
+              backgroundSize: '100% auto',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+            }}
+          />
+        ))}
+      {objects.filter((object) => !object.hidden).length === 0 && (
+        <div className="win">You Saved the World!</div>
+      )}
     </div>
   );
 }
