@@ -35,6 +35,8 @@
     width: 60px;
     height: 60px;
 
-    background: transparent url('/images/covid-sprite.png') no-repeat top center;
-    background-size: 100% auto;
+    background: transparent url('/images/covid-sprite-animate.png') no-repeat top center;
+    background-size: auto 60px;
+
+    animation: background-animation 2s steps(5) infinite;
 }
