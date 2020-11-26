@@ -13,7 +13,7 @@
   }
 
   100% {
-    background-position: -240px 0;
+    background-position: -300px 0;
   }
 }
 
@@ -21,10 +21,10 @@
     width: 60px;
     height: 60px;
 
-    background: transparent url('/images/flu-sprite.png') no-repeat top center;
-    background-size: 100% auto;
+    background: transparent url('/images/flu-sprite-animate.png') no-repeat top center;
+    background-size: auto 60px;
 
-    // animation: background-animation 1s steps(3) infinite;
+    animation: background-animation 2s steps(5) infinite;
 }
 
 .covid-sprite {
