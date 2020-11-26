@@ -1,23 +1,36 @@
 .game {
-  position: relative;
-  margin: auto;
-  background: #222;
-  overflow: hidden;
-  box-shadow: 0 0 20px #000;
+    position: relative;
+    margin: auto;
+    background: #222;
+    overflow: hidden;
+    box-shadow: 0 0 20px #000;
+}
+
+@keyframes background-animation {
+  /* set background position to the first frame */
+  0% {
+    background-position: 0 0;
+  }
+
+  100% {
+    background-position: -240px 0;
+  }
 }
 
 .flu-sprite {
-	width: 40px;
-	height: 40px;
+    width: 60px;
+    height: 60px;
 
-	background: transparent url('/images/flu-sprite.png') no-repeat top center;
-	background-size: 100% auto;
+    background: transparent url('/images/flu-sprite.png') no-repeat top center;
+    background-size: 100% auto;
+
+    // animation: background-animation 1s steps(3) infinite;
 }
 
 .covid-sprite {
-	width: 40px;
-	height: 40px;
-	
-	background: transparent url('/images/covid-sprite.png') no-repeat top center;
-	background-size: 100% auto;
+    width: 60px;
+    height: 60px;
+
+    background: transparent url('/images/covid-sprite.png') no-repeat top center;
+    background-size: 100% auto;
 }
