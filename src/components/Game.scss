@@ -5,3 +5,19 @@
   overflow: hidden;
   box-shadow: 0 0 20px #000;
 }
+
+.flu-sprite {
+	width: 40px;
+	height: 40px;
+
+	background: transparent url('/images/flu-sprite.png') no-repeat top center;
+	background-size: 100% auto;
+}
+
+.covid-sprite {
+	width: 40px;
+	height: 40px;
+	
+	background: transparent url('/images/covid-sprite.png') no-repeat top center;
+	background-size: 100% auto;
+}

@@ -191,18 +191,11 @@ function GameObject({ position, velocity, type }: ObjectProps) {
     case 'flu':
       return (
         <div
-          className="flu"
+          className="flu-sprite"
           style={{
-            color: '#fff',
-            borderLeft: '20px solid rgba(100, 180, 220, 0.7)',
-            borderRight: '20px solid transparent',
-            borderTop: '7px solid transparent',
-            borderBottom: '7px solid transparent',
             position: 'absolute',
             top: position.y - 7,
             left: position.x - 20,
-            width: 0,
-            height: 0,
             transform: `rotate(${velocity.angle}rad)`,
           }}
         />
@@ -210,18 +203,11 @@ function GameObject({ position, velocity, type }: ObjectProps) {
     case 'covid':
       return (
         <div
-          className="covid"
+          className="covid-sprite"
           style={{
-            color: '#fcba03',
-            borderLeft: '20px solid rgba(252, 186, 3, 0.7)',
-            borderRight: '20px solid transparent',
-            borderTop: '7px solid transparent',
-            borderBottom: '7px solid transparent',
             position: 'absolute',
             top: position.y - 7,
             left: position.x - 20,
-            width: 0,
-            height: 0,
             transform: `rotate(${velocity.angle}rad)`,
           }}
         />
