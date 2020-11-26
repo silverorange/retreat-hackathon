@@ -21,12 +21,33 @@ interface Velocity {
 type ObjectType = 'flu' | 'covid';
 
 const objectTypes: ObjectType[] = ['flu', 'covid'];
+const SPRITE_RADIUS = 30;
+const BUG_COUNT = 20;
 
 interface ObjectProps {
   position: Position;
   velocity: Velocity;
   type: ObjectType;
+  health: number;
+  points: number;
+  timeAlive: number;
+  timesSplit: number;
 }
+
+const bugDefaults: {
+  [type: string]: { health: number; points: number; doublingTime: number };
+} = {
+  flu: {
+    health: 10,
+    points: 10,
+    doublingTime: 3000,
+  },
+  covid: {
+    health: 20,
+    points: 20,
+    doublingTime: 5000,
+  },
+};
 
 interface WorldProps {
   width: number;
@@ -42,6 +63,7 @@ export function Game() {
   // coordinates.
   const gameRef = useRef<HTMLDivElement>(null);
 
+  const [score, setScore] = useState<number>(0);
   // The useState() hook is used to maintain the state of the game world.
   // Updating the state will cause the world to re-render. We update the game
   // world state using the useAnimationFrame() hook below.
@@ -60,7 +82,8 @@ export function Game() {
     // If your game objects have more properties than position and velocity,
     // add initial values here. For example, size, value, type, etc.
     const initialObjects: ObjectProps[] = [];
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < BUG_COUNT; i++) {
+      const type = _.sample(objectTypes) as ObjectType;
       initialObjects.push({
         position: {
           x: Math.floor(Math.random() * width + 1),
@@ -68,9 +91,13 @@ export function Game() {
         },
         velocity: {
           angle: Math.random() * Math.PI * 2,
-          speed: Math.floor(Math.random() * 201) + 50,
+          speed: Math.floor(Math.random() * 101),
         },
-        type: _.sample(objectTypes) as ObjectType,
+        type,
+        health: bugDefaults[type].health,
+        points: bugDefaults[type].points,
+        timeAlive: 0,
+        timesSplit: 0,
       });
     }
 
@@ -97,7 +124,8 @@ export function Game() {
       // Be careful putting console.log calls in this callback as they will
       // put output on the console on every animation frame, up to 60 times per
       // second.
-      const updatedObjects = objects.map(({ position, velocity, type }) => {
+      const updatedObjects = objects.map((obj) => {
+        const { position, velocity } = obj;
         // Get change in position scaled by the animation frame time. This uses
         // vector component formulas from high-school physics to get delta-x and
         // delta-y values:
@@ -115,9 +143,10 @@ export function Game() {
         };
 
         return {
+          ...obj,
           position: newPosition,
           velocity,
-          type,
+          timeAlive: obj.timeAlive + delta,
         };
       });
 
@@ -157,7 +186,18 @@ export function Game() {
           y: e.clientY - rect.top,
         };
 
-        console.log('clicked', position);
+        objects.forEach((obj, index) => {
+          const distance = Math.sqrt(
+            Math.pow(obj.position.x - position.x, 2) +
+              Math.pow(obj.position.y - position.y, 2)
+          );
+          if (distance <= SPRITE_RADIUS) {
+            const newObjects = _.cloneDeep(objects);
+            newObjects.splice(index, 1);
+            setObjects(newObjects);
+            setScore((score) => score + obj.points);
+          }
+        });
       }
     }
 
@@ -169,7 +209,7 @@ export function Game() {
         div.removeEventListener('click', handleClick, false);
       };
     }
-  }, [gameRef]);
+  }, [gameRef, objects]);
 
   // Objects are rendered here with placeholder divs. You can replace this
   // with any type of component you want.
@@ -179,6 +219,7 @@ export function Game() {
 
   return (
     <div className="game" style={{ width, height }} ref={gameRef}>
+      <span className="score">Score: {score}</span>
       {objects.map((object, index) => (
         <GameObject key={index} {...object} />
       ))}
@@ -194,8 +235,8 @@ function GameObject({ position, velocity, type }: ObjectProps) {
           className="flu-sprite"
           style={{
             position: 'absolute',
-            top: position.y - 7,
-            left: position.x - 20,
+            top: position.y - SPRITE_RADIUS,
+            left: position.x - SPRITE_RADIUS,
             transform: `rotate(${velocity.angle}rad)`,
           }}
         />
@@ -206,8 +247,8 @@ function GameObject({ position, velocity, type }: ObjectProps) {
           className="covid-sprite"
           style={{
             position: 'absolute',
-            top: position.y - 7,
-            left: position.x - 20,
+            top: position.y - SPRITE_RADIUS,
+            left: position.x - SPRITE_RADIUS,
             transform: `rotate(${velocity.angle}rad)`,
           }}
         />

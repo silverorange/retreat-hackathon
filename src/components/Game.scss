@@ -1,13 +1,14 @@
 .game {
-    position: relative;
-    margin: auto;
-    background: #222;
-    overflow: hidden;
-    box-shadow: 0 0 20px #000;
+  position: relative;
+  margin: auto;
+  background: #222;
+  overflow: hidden;
+  box-shadow: 0 0 20px #000;
 }
 
-.app, .game {
-    cursor: url('/images/spray-small.png') 20 20, crosshair;
+.app,
+.game {
+  cursor: url('/images/spray-small.png') 20 20, crosshair;
 }
 
 @keyframes background-animation {
@@ -22,21 +23,29 @@
 }
 
 .flu-sprite {
-    width: 60px;
-    height: 60px;
+  width: 60px;
+  height: 60px;
 
-    background: transparent url('/images/flu-sprite-animate.png') no-repeat top center;
-    background-size: auto 60px;
+  background: transparent url('/images/flu-sprite-animate.png') no-repeat top
+    center;
+  background-size: auto 60px;
 
-    animation: background-animation 2s steps(5) infinite;
+  animation: background-animation 2s steps(5) infinite;
 }
 
 .covid-sprite {
-    width: 60px;
-    height: 60px;
+  width: 60px;
+  height: 60px;
 
-    background: transparent url('/images/covid-sprite-animate.png') no-repeat top center;
-    background-size: auto 60px;
+  background: transparent url('/images/covid-sprite-animate.png') no-repeat top
+    center;
+  background-size: auto 60px;
 
-    animation: background-animation 2s steps(5) infinite;
+  animation: background-animation 2s steps(5) infinite;
+}
+
+.score {
+  color: #fff;
+  padding: 10px;
+  font-size: 20px;
 }
